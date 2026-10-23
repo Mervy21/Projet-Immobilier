@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-
 {% block titre %}Tableau de bord — NESTY{% endblock %}
-
 {% block styles %}
 <style>
     .dashboard-intro {
@@ -165,8 +163,7 @@
     }
 
     @media (max-width: 1000px) {
-        .dashboard-kpis,
-        .dashboard-links {
+        .dashboard-kpis,.dashboard-links {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
     }
@@ -408,8 +405,7 @@
 </section>
 
 {% endblock %}
-
 {% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="{{ url_for('static', filename='js/admin_dashboard.js') }}" defer></script>
 {% endblock %}

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Gestion des demandes — NESTY{% endblock %}
-{% block content %}
+{% block titre %}Gestion des demandes — NESTY{% endblock %}
+{% block contenu %}
 <section class="admin-page">
     <div class="container">
         <div class="admin-header">
@@ -60,22 +60,22 @@
                                 </div>
                             </td>
                             <td>
-                                {% if demande.statut == 'en_attente' %}
-                                <span class="status-badge status-pending">
-                                    En attente
-                                </span>
-                                {% elif demande.statut == 'acceptee' %}
-                                <span class="status-badge status-available">
-                                    Acceptée
-                                </span>
-                                {% elif demande.statut == 'refusee' %}
-                                <span class="status-badge status-unavailable">
-                                    Refusée
-                                </span>
+                                {% if demande.statut == 'nouvelle' %}
+                                    <span class="status-badge status-pending">
+                                        Nouvelle
+                                    </span>
+                                {% elif demande.statut == 'confirmée' %}
+                                    <span class="status-badge status-available">
+                                        Confirmée
+                                    </span>
+                                {% elif demande.statut == 'effectuée' %}
+                                    <span class="status-badge status-unavailable">
+                                        Effectuée
+                                    </span>
                                 {% else %}
-                                <span class="status-badge">
-                                    {{ demande.statut or 'Non défini' }}
-                                </span>
+                                    <span class="status-badge">
+                                        {{ demande.statut or 'Non défini' }}
+                                    </span>
                                 {% endif %}
                             </td>
                             <td>
@@ -96,22 +96,22 @@
                                         required
                                     >
                                         <option
-                                            value="en_attente"
-                                            {% if demande.statut == 'en_attente' %}selected{% endif %}
+                                            value="nouvelle"
+                                            {% if demande.statut == 'nouvelle' %}selected{% endif %}
                                         >
-                                            En attente
+                                            Nouvelle
                                         </option>
                                         <option
-                                            value="acceptee"
-                                            {% if demande.statut == 'acceptee' %}selected{% endif %}
+                                            value="confirmée"
+                                            {% if demande.statut == 'confirmée' %}selected{% endif %}
                                         >
-                                            Accepter
+                                            Confirmée
                                         </option>
                                         <option
-                                            value="refusee"
-                                            {% if demande.statut == 'refusee' %}selected{% endif %}
+                                            value="effectuée"
+                                            {% if demande.statut == 'effectuée' %}selected{% endif %}
                                         >
-                                            Refuser
+                                            Effectuée
                                         </option>
                                     </select>
                                     <button type="submit" class="btn btn-small btn-primary">

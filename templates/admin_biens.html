@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Gestion des logements — NESTY{% endblock %}
-{% block content %}
+{% block titre %}Gestion des logements — NESTY{% endblock %}
+{% block contenu %}
 <section class="admin-page">
     <div class="container">
         <div class="admin-header">
@@ -77,7 +77,7 @@
                         >
                     </div>
                     <div class="form-group">
-                        <label for="superficie">Superficie (m²)</label>
+                        <label for="superficie">Superficie (m²)*</label>
                         <input
                             type="number"
                             id="superficie"
@@ -85,6 +85,7 @@
                             min="1"
                             step="0.1"
                             placeholder="Ex. 65"
+                            required
                         >
                     </div>
                     <div class="form-group">

@@ -276,7 +276,7 @@ def ajouter_bien():
             or loyer <= 0
             or pieces < 1
             or superficie <= 0
-            or not photos
+            or not description
         ):
             raise ValueError
     except ValueError:
@@ -346,14 +346,21 @@ def changer_disponibilite_bien(bien_id):
 @administrateur_requis
 def gestion_demandes():
     connexion = obtenir_connexion()
-    demandes = connexion.execute("""
-        SELECT demandes_visite.*, biens.titre AS titre_bien
-        FROM demandes_visite
-        JOIN biens ON demandes_visite.bien_id = biens.id
-        ORDER BY demandes_visite.date_creation DESC
-    """).fetchall()
-    connexion.close()
-    return render_template("admin_demandes.html", demandes=demandes)
+
+    try:
+        demandes = connexion.execute("""
+            SELECT demandes_visite.*, biens.titre AS titre_bien
+            FROM demandes_visite
+            JOIN biens ON demandes_visite.bien_id = biens.id
+            ORDER BY demandes_visite.date_creation DESC
+        """).fetchall()
+
+        return render_template(
+            "admin_demandes.html",
+            demandes=demandes
+        )
+    finally:
+        connexion.close()
 @app.route("/admin/demandes/<int:demande_id>/statut", methods=["POST"])
 @administrateur_requis
 def changer_statut_demande(demande_id):
