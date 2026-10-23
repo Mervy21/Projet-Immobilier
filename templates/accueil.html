@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block titre %}NESTY — Trouvez votre prochain chez-vous à Yaoundé{% endblock %}
+{% block contenu %}
+<section class="hero">
+    <div class="hero-contenu">
+        <p class="hero-sous-titre">BIENVENUE CHEZ NESTY</p>
+        <h1>Le logement idéal commence par la bonne adresse.</h1>
+        <p>
+            Découvrez une sélection de chambres modernes, de studios,
+            d'appartements et de villas à louer à Yaoundé.
+            Votre prochain chez-vous est peut-être ici.
+        </p>
+        <div class="hero-actions">
+            <a href="#biens" class="bouton-principal">
+                Explorer les logements
+            </a>
+            <a href="#recherche" class="bouton-secondaire">
+                Affiner ma recherche
+            </a>
+        </div>
+        <div class="hero-points">
+            <span>Logements à Yaoundé</span>
+            <span>Prix en FCFA</span>
+            <span>Demande de visite en ligne</span>
+        </div>
+    </div>
+</section>
+<section class="recherche" id="recherche">
+    <div class="section-entete">
+        <p class="hero-sous-titre">VOTRE RECHERCHE</p>
+        <h2>Trouvez un logement qui vous correspond</h2>
+        <p>
+            Sélectionnez vos critères pour découvrir les biens adaptés
+            à votre budget et à vos besoins.
+        </p>
+    </div>
+    <form id="formulaire-recherche">
+        <div class="champ">
+            <label for="type">Type de logement</label>
+            <select id="type" name="type">
+                <option value="">Tous les types</option>
+                <option value="Studio">Studio</option>
+                <option value="Chambre moderne">Chambre moderne</option>
+                <option value="Appartement">Appartement</option>
+                <option value="Villa">Villa</option>
+            </select>
+        </div>
+        <div class="champ">
+            <label for="quartier">Quartier</label>
+            <select id="quartier" name="quartier">
+                <option value="">Tous les quartiers</option>
+                {% for quartier in quartiers %}
+                    <option value="{{ quartier.id }}">
+                        {{ quartier.nom }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="champ">
+            <label for="loyer_maximum">Budget mensuel maximum (FCFA)</label>
+            <input
+                type="number"
+                id="loyer_maximum"
+                name="loyer_maximum"
+                min="1"
+                placeholder="Ex. : 100000">
+        </div>
+        <div class="champ">
+            <label for="pieces_minimum">Nombre minimum de pièces</label>
+            <select id="pieces_minimum" name="pieces_minimum">
+                <option value="">Tous les logements</option>
+                <option value="1">1 pièce ou plus</option>
+                <option value="2">2 pièces ou plus</option>
+                <option value="3">3 pièces ou plus</option>
+                <option value="4">4 pièces ou plus</option>
+            </select>
+        </div>
+        <button type="submit" class="bouton-principal">
+            Rechercher
+        </button>
+        <button type="reset" class="bouton-secondaire">
+            Réinitialiser
+        </button>
+    </form>
+</section>
+<section class="biens-section" id="biens">
+    <div class="section-entete">
+        <p class="hero-sous-titre">NOTRE SÉLECTION</p>
+        <h2>Découvrez nos logements</h2>
+        <p>
+            Des espaces pour différents besoins et budgets,
+            dans plusieurs quartiers de Yaoundé.
+        </p>
+    </div>
+    <p id="nombre-resultats" aria-live="polite">
+        {{ biens|length }} logement(s) disponible(s)
+    </p>
+    <div class="grille-biens" id="grille-biens">
+        {% for bien in biens %}
+            <article class="carte-bien">
+                <div class="image-bien">
+                    {% if bien.photos %}
+                        <img
+                            src="{{ url_for('static', filename=bien.photos) }}"
+                            alt="Photo du logement : {{ bien.titre }}"
+                            loading="lazy">
+                    {% else %}
+                        <div class="image-indisponible">
+                            Photo non disponible
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="informations-bien">
+                    <p class="type-bien">{{ bien.type }}</p>
+                    <h3>{{ bien.titre }}</h3>
+                    <p class="quartier-bien">
+                        {{ bien.quartier }}, Yaoundé
+                    </p>
+                    <p class="caracteristiques">
+                        {{ bien.nombre_pieces }} pièce(s)
+                        · {{ bien.superficie }} m²
+                    </p>
+                    <p class="prix-bien">
+                        {{ "{:,.0f}".format(bien.loyer_mensuel).replace(",", " ") }}
+                        FCFA <span>/ mois</span>
+                    </p>
+                    <a
+                        href="{{ url_for('detail_bien', bien_id=bien.id) }}"
+                        class="bouton-principal bouton-carte">
+                        Découvrir ce logement
+                    </a>
+                </div>
+            </article>
+        {% else %}
+            <p class="aucun-bien">
+                Aucun logement n'est disponible pour le moment.
+                Revenez bientôt pour découvrir nos nouvelles offres.
+            </p>
+        {% endfor %}
+    </div>
+</section>
+<section class="avantages">
+    <div class="section-entete">
+        <p class="hero-sous-titre">L'EXPÉRIENCE NESTY</p>
+        <h2>Une recherche plus simple, un choix plus éclairé</h2>
+        <p>
+            Les fonctionnalités essentielles pour avancer
+            sereinement dans votre recherche de logement.
+        </p>
+    </div>
+    <div class="grille-avantages">
+        <article class="avantage">
+            <h3>Recherche personnalisée</h3>
+            <p>
+                Filtrez les logements selon le type de bien,
+                le quartier, le nombre de pièces et votre budget.
+            </p>
+        </article>
+        <article class="avantage">
+            <h3>Plusieurs types de biens</h3>
+            <p>
+                Comparez des chambres modernes, des studios,
+                des appartements et des villas.
+            </p>
+        </article>
+        <article class="avantage">
+            <h3>Demande de visite</h3>
+            <p>
+                Retrouvez les détails d'un logement et envoyez
+                une demande de visite depuis la plateforme.
+            </p>
+        </article>
+    </div>
+</section>
+{% endblock %}

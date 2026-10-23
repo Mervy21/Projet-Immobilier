@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titre %}NESTY — Immobilier à Yaoundé{% endblock %}</title>
+    <meta
+        name="description"
+        content="Découvrez les logements à louer à Yaoundé avec NESTY : chambres modernes, studios, appartements et villas.">
+    <meta name="theme-color" content="#173f35">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        <nav class="navbar container" aria-label="Navigation principale">
+            <a
+                href="{{ url_for('accueil') }}"
+                class="logo"
+                aria-label="NESTY, retourner à l'accueil">
+                NESTY
+            </a>
+            <button
+                type="button"
+                class="menu-bouton"
+                id="menu-bouton"
+                aria-label="Ouvrir le menu"
+                aria-expanded="false"
+                aria-controls="menu">
+                <span aria-hidden="true">☰</span>
+            </button>
+            <ul class="menu nav-links" id="menu">
+                <li>
+                    <a href="{{ url_for('accueil') }}">
+                        Accueil
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('accueil') }}#biens">
+                        Nos logements
+                    </a>
+                </li>
+                {% if session.get('administrateur_id') %}
+                    <li>
+                        <a href="{{ url_for('tableau_bord_admin') }}">
+                            Tableau de bord
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('gestion_biens') }}">
+                            Logements
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('gestion_demandes') }}">
+                            Demandes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('gestion_locations') }}">
+                            Locations
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('gestion_paiements') }}">
+                            Paiements
+                        </a>
+                    </li>
+                    <li>
+                        <form
+                            action="{{ url_for('deconnexion_admin') }}"
+                            method="POST">
+                            <button type="submit">
+                                Déconnexion
+                            </button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{{ url_for('connexion_admin') }}">
+                            Administration
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main id="contenu-principal">
+        <div
+            class="flash-messages container"
+            aria-live="polite"
+            aria-atomic="true">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for categorie, message in messages %}
+                        <div
+                            class="flash {{ 'error' if categorie == 'erreur' else 'success' if categorie == 'succes' else categorie }}"
+                            role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        {% block contenu %}{% endblock %}
+    </main>
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <p>
+                &copy; 2026 NESTY — Agence immobilière à Yaoundé, Cameroun.
+            </p>
+            <p>
+                Votre prochain logement commence ici.
+            </p>
+        </div>
+    </footer>
+    <script
+        src="{{ url_for('static', filename='js/site.js') }}"
+        defer></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

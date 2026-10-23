@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block titre %}Tableau de bord — NESTY{% endblock %}
+
+{% block styles %}
+<style>
+    .dashboard-intro {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+    }
+
+    .dashboard-intro h1 {
+        margin-bottom: 8px;
+    }
+
+    .dashboard-intro p {
+        color: #68766d;
+    }
+
+    .dashboard-badge {
+        background: #e8eee7;
+        color: #244b38;
+        padding: 10px 16px;
+        border-radius: 30px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .dashboard-section {
+        margin-top: 38px;
+    }
+
+    .dashboard-section > h2 {
+        color: #214633;
+        margin-bottom: 8px;
+    }
+
+    .dashboard-description {
+        color: #718076;
+        margin-bottom: 22px;
+    }
+
+    .dashboard-kpis {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+        margin-top: 24px;
+    }
+
+    .dashboard-kpi {
+        background: #fffdf8;
+        border: 1px solid #e6e4d9;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 5px 18px rgba(32, 65, 47, 0.05);
+    }
+
+    .dashboard-kpi-label {
+        color: #69766c;
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+    }
+
+    .dashboard-kpi-value {
+        color: #214633;
+        font-size: 1.9rem;
+        font-weight: 750;
+        overflow-wrap: anywhere;
+    }
+
+    .dashboard-kpi-detail {
+        color: #8a8d7c;
+        font-size: 0.82rem;
+        margin-top: 8px;
+    }
+
+    .dashboard-charts {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+        margin-top: 24px;
+    }
+
+    .dashboard-chart-card {
+        min-width: 0;
+        background: #fffdf8;
+        border: 1px solid #e6e4d9;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 5px 18px rgba(32, 65, 47, 0.05);
+    }
+
+    .dashboard-chart-card h3 {
+        color: #214633;
+        margin-bottom: 6px;
+        font-size: 1.05rem;
+    }
+
+    .dashboard-chart-card > p {
+        color: #7a857b;
+        font-size: 0.88rem;
+        margin-bottom: 20px;
+    }
+
+    .dashboard-chart-container {
+        position: relative;
+        width: 100%;
+        height: 300px;
+    }
+
+    .dashboard-chart-card.large {
+        grid-column: 1 / -1;
+    }
+
+    .dashboard-chart-card.large .dashboard-chart-container {
+        height: 330px;
+    }
+
+    .dashboard-chart-message {
+        color: #68766d;
+        background: #f2f0e7;
+        border-radius: 12px;
+        padding: 16px;
+        margin-top: 16px;
+    }
+
+    .dashboard-links {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 22px;
+    }
+
+    .dashboard-link {
+        display: block;
+        padding: 20px;
+        border: 1px solid #e6e4d9;
+        border-radius: 16px;
+        background: #fffdf8;
+        color: #214633;
+        text-decoration: none;
+        transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .dashboard-link:hover {
+        transform: translateY(-3px);
+        border-color: #b59b58;
+    }
+
+    .dashboard-link h3 {
+        margin-bottom: 8px;
+    }
+
+    .dashboard-link p {
+        color: #718076;
+        font-size: 0.9rem;
+    }
+
+    .dashboard-table-section {
+        margin-top: 38px;
+    }
+
+    @media (max-width: 1000px) {
+        .dashboard-kpis,
+        .dashboard-links {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 700px) {
+        .dashboard-charts {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard-chart-card.large {
+            grid-column: auto;
+        }
+
+        .dashboard-chart-container,
+        .dashboard-chart-card.large .dashboard-chart-container {
+            height: 270px;
+        }
+
+        .dashboard-kpis {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .dashboard-kpi {
+            padding: 16px;
+        }
+
+        .dashboard-kpi-value {
+            font-size: 1.45rem;
+        }
+
+        .dashboard-links {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .dashboard-kpis {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block contenu %}
+
+<section class="admin-page">
+    <div class="container">
+
+        <header class="dashboard-intro">
+            <div>
+                <p class="hero-sous-titre">ESPACE ADMINISTRATEUR</p>
+                <h1>Tableau de bord NESTY</h1>
+                <p>Visualisez les performances de votre agence immobilière.</p>
+            </div>
+
+            <span class="dashboard-badge">Administration immobilière</span>
+        </header>
+
+        <section class="dashboard-section">
+            <h2>Vue d'ensemble</h2>
+            <p class="dashboard-description">
+                Les indicateurs ci-dessous proviennent de votre base de données.
+            </p>
+
+            <div class="dashboard-kpis">
+                <article class="dashboard-kpi">
+                    <p class="dashboard-kpi-label">Total des logements</p>
+                    <p class="dashboard-kpi-value">
+                        {{ statistiques.total_biens }}
+                    </p>
+                    <p class="dashboard-kpi-detail">Tous les logements enregistrés</p>
+                </article>
+
+                <article class="dashboard-kpi">
+                    <p class="dashboard-kpi-label">Disponibles</p>
+                    <p class="dashboard-kpi-value">
+                        {{ statistiques.biens_disponibles }}
+                    </p>
+                    <p class="dashboard-kpi-detail">Prêts à être loués</p>
+                </article>
+
+                <article class="dashboard-kpi">
+                    <p class="dashboard-kpi-label">Logements loués</p>
+                    <p class="dashboard-kpi-value">
+                        {{ statistiques.biens_loues }}
+                    </p>
+                    <p class="dashboard-kpi-detail">Indisponibles actuellement</p>
+                </article>
+
+                <article class="dashboard-kpi">
+                    <p class="dashboard-kpi-label">Taux d'occupation</p>
+                    <p class="dashboard-kpi-value" id="kpi-taux-occupation">
+                        …
+                    </p>
+                    <p class="dashboard-kpi-detail">Part des logements loués</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h2>Analyse graphique</h2>
+            <p class="dashboard-description">
+                Explorez la disponibilité, la demande, les revenus et les loyers.
+            </p>
+
+            <div id="dashboard-message" class="dashboard-chart-message" role="status">
+                Chargement des graphiques…
+            </div>
+
+            <div class="dashboard-charts">
+
+                <article class="dashboard-chart-card">
+                    <h3>Disponibilité des logements</h3>
+                    <p>Répartition des logements disponibles et loués.</p>
+                    <div class="dashboard-chart-container">
+                        <canvas id="graphique-disponibilite"
+                                aria-label="Diagramme de disponibilité des logements"
+                                role="img"></canvas>
+                    </div>
+                </article>
+
+                <article class="dashboard-chart-card">
+                    <h3>Logements par type</h3>
+                    <p>Nombre de biens enregistrés dans chaque catégorie.</p>
+                    <div class="dashboard-chart-container">
+                        <canvas id="graphique-types"
+                                aria-label="Nombre de logements par type"
+                                role="img"></canvas>
+                    </div>
+                </article>
+
+                <article class="dashboard-chart-card">
+                    <h3>Demandes de visite</h3>
+                    <p>Répartition selon le statut des demandes enregistrées.</p>
+                    <div class="dashboard-chart-container">
+                        <canvas id="graphique-demandes"
+                                aria-label="Demandes de visite par statut"
+                                role="img"></canvas>
+                    </div>
+                </article>
+
+                <article class="dashboard-chart-card">
+                    <h3>Revenus mensuels</h3>
+                    <p>Montants des paiements enregistrés sur les six derniers mois.</p>
+                    <div class="dashboard-chart-container">
+                        <canvas id="graphique-revenus"
+                                aria-label="Évolution mensuelle des revenus"
+                                role="img"></canvas>
+                    </div>
+                </article>
+
+                <article class="dashboard-chart-card large">
+                    <h3>Loyer moyen par quartier</h3>
+                    <p>Comparaison des loyers mensuels moyens en FCFA.</p>
+                    <div class="dashboard-chart-container">
+                        <canvas id="graphique-quartiers"
+                                aria-label="Loyer moyen par quartier"
+                                role="img"></canvas>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+
+        <section class="dashboard-section">
+            <h2>Gestion de l'agence</h2>
+
+            <div class="dashboard-links">
+                <a href="{{ url_for('gestion_biens') }}" class="dashboard-link">
+                    <h3>Logements</h3>
+                    <p>Consulter les biens et modifier leur disponibilité.</p>
+                </a>
+
+                <a href="{{ url_for('gestion_demandes') }}" class="dashboard-link">
+                    <h3>Demandes de visite</h3>
+                    <p>Consulter les demandes et actualiser leur statut.</p>
+                </a>
+
+                <a href="{{ url_for('gestion_locations') }}" class="dashboard-link">
+                    <h3>Locations</h3>
+                    <p>Enregistrer une location et gérer les départs.</p>
+                </a>
+
+                <a href="{{ url_for('gestion_paiements') }}" class="dashboard-link">
+                    <h3>Paiements</h3>
+                    <p>Enregistrer et consulter les paiements de loyers.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="dashboard-table-section">
+            <h2>Demandes de visite en attente</h2>
+
+            {% if demandes %}
+                <div class="tableau-conteneur">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Téléphone</th>
+                                <th>Logement</th>
+                                <th>Date souhaitée</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for demande in demandes %}
+                                <tr>
+                                    <td>{{ demande.nom_client }}</td>
+                                    <td>{{ demande.telephone }}</td>
+                                    <td>{{ demande.titre_bien }}</td>
+                                    <td>{{ demande.date_souhaitee }}</td>
+                                    <td>{{ demande.statut }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>
+                    <a href="{{ url_for('gestion_demandes') }}" class="btn">
+                        Gérer toutes les demandes
+                    </a>
+                </p>
+            {% else %}
+                <p>Aucune nouvelle demande de visite.</p>
+            {% endif %}
+        </section>
+
+        <section class="dashboard-section">
+            <h2>Indicateurs complémentaires</h2>
+            <div id="bloc-statistiques-detaillees">
+                <p>Chargement des statistiques complémentaires…</p>
+            </div>
+        </section>
+
+    </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/admin_dashboard.js') }}" defer></script>
+{% endblock %}

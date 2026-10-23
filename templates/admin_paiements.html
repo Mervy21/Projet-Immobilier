@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block titre %}Gestion des paiements — NESTY{% endblock %}
+{% block contenu %}
+<section class="admin-page">
+    <div class="container">
+        <div class="admin-header">
+            <div>
+                <span class="section-eyebrow">ESPACE ADMINISTRATEUR</span>
+                <h1>Gestion des paiements</h1>
+                <p>Suivez les loyers encaissés et consultez l'historique des paiements.</p>
+            </div>
+            <a href="{{ url_for('tableau_bord_admin') }}" class="btn btn-secondary">
+                ← Tableau de bord
+            </a>
+        </div>
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <div>
+                    <span class="section-eyebrow">ENCAISSEMENT</span>
+                    <h2>Enregistrer un paiement</h2>
+                    <p>Renseignez les informations du loyer payé par le locataire.</p>
+                </div>
+            </div>
+            <form action="{{ url_for('ajouter_paiement') }}" method="POST" class="admin-form">
+                <div class="form-grid">
+                    <div class="form-group form-group-full">
+                        <label for="location_id">Location active *</label>
+                        <select id="location_id" name="location_id" required>
+                            <option value="">Sélectionner une location</option>
+                            {% for location in locations %}
+                            <option value="{{ location.id }}">
+                                {{ location.nom_locataire }} — {{ location.titre_bien }}
+                                {% if location.loyer_convenu %}
+                                    — {{ "{:,.0f}".format(location.loyer_convenu).replace(",", " ") }} FCFA/mois
+                                {% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if not locations %}
+                        <small>Aucune location active. Enregistrez d'abord une location pour pouvoir ajouter un paiement.</small>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="mois_concerne">Mois concerné *</label>
+                        <input
+                            type="month"
+                            id="mois_concerne"
+                            name="mois_concerne"
+                            value="{{ mois_actuel }}"
+                            required
+                        >
+                        <small>Choisissez le mois de loyer réglé.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="montant">Montant payé (FCFA) *</label>
+                        <input
+                            type="number"
+                            id="montant"
+                            name="montant"
+                            min="1"
+                            step="1"
+                            placeholder="Ex. 150000"
+                            required
+                        >
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="date_paiement">Date du paiement *</label>
+                        <input
+                            type="date"
+                            id="date_paiement"
+                            name="date_paiement"
+                            max="{{ mois_actuel }}-31"
+                            required
+                        >
+                        <small>La date doit correspondre à un paiement déjà effectué.</small>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="reset" class="btn btn-secondary">
+                        Effacer
+                    </button>
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        {% if not locations %}disabled{% endif %}
+                    >
+                        + Enregistrer le paiement
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <div>
+                    <span class="section-eyebrow">SUIVI FINANCIER</span>
+                    <h2>Historique des paiements</h2>
+                    <p>Retrouvez les paiements enregistrés pour chaque locataire.</p>
+                </div>
+                <span class="admin-count">
+                    {{ paiements|length }} paiement(s)
+                </span>
+            </div>
+            {% if paiements %}
+            <div class="tableau-conteneur">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Locataire</th>
+                            <th>Logement</th>
+                            <th>Mois concerné</th>
+                            <th>Montant payé</th>
+                            <th>Date de paiement</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for paiement in paiements %}
+                        <tr>
+                            <td>
+                                <strong>{{ paiement.nom_locataire }}</strong>
+                            </td>
+                            <td>{{ paiement.titre_bien }}</td>
+                            <td>
+                                <span class="payment-month">
+                                    {{ paiement.mois_concerne }}
+                                </span>
+                            </td>
+                            <td>
+                                <strong class="payment-amount">
+                                    {{ "{:,.0f}".format(paiement.montant).replace(",", " ") }}
+                                    FCFA
+                                </strong>
+                            </td>
+                            <td>{{ paiement.date_paiement }}</td>
+                            <td>
+                                <span class="status-badge status-available">
+                                    Enregistré
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="admin-empty-state">
+                <div class="empty-state-icon">₣</div>
+                <h3>Aucun paiement enregistré</h3>
+                <p>Les paiements ajoutés via le formulaire apparaîtront ici.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

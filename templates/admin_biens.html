@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}Gestion des logements — NESTY{% endblock %}
+{% block content %}
+<section class="admin-page">
+    <div class="container">
+        <div class="admin-header">
+            <div>
+                <span class="section-eyebrow">ESPACE ADMINISTRATEUR</span>
+                <h1>Gestion des logements</h1>
+                <p>Ajoutez, consultez et gérez les logements disponibles sur NESTY.</p>
+            </div>
+            <a href="{{ url_for('tableau_bord_admin') }}" class="btn btn-secondary">
+                ← Tableau de bord
+            </a>
+        </div>
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <div>
+                    <span class="section-eyebrow">NOUVEAU BIEN</span>
+                    <h2>Ajouter un logement</h2>
+                    <p>Renseignez les informations du logement à publier.</p>
+                </div>
+            </div>
+            <form action="{{ url_for('ajouter_bien') }}" method="POST" class="admin-form">
+                <div class="form-grid">
+                    <div class="form-group form-group-full">
+                        <label for="titre">Titre du logement *</label>
+                        <input
+                            type="text"
+                            id="titre"
+                            name="titre"
+                            placeholder="Ex. Studio moderne à Bastos"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Type de logement *</label>
+                        <select id="type" name="type" required>
+                            <option value="">Choisir un type</option>
+                            <option value="Studio">Studio</option>
+                            <option value="Chambre moderne">Chambre moderne</option>
+                            <option value="Appartement">Appartement</option>
+                            <option value="Villa">Villa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="quartier_id">Quartier *</label>
+                        <select id="quartier_id" name="quartier_id" required>
+                            <option value="">Choisir un quartier</option>
+                            {% for quartier in quartiers %}
+                            <option value="{{ quartier.id }}">{{ quartier.nom }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="loyer_mensuel">Loyer mensuel (FCFA) *</label>
+                        <input
+                            type="number"
+                            id="loyer_mensuel"
+                            name="loyer_mensuel"
+                            min="1"
+                            step="1"
+                            placeholder="Ex. 150000"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="nombre_pieces">Nombre de pièces *</label>
+                        <input
+                            type="number"
+                            id="nombre_pieces"
+                            name="nombre_pieces"
+                            min="1"
+                            step="1"
+                            placeholder="Ex. 3"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="superficie">Superficie (m²)</label>
+                        <input
+                            type="number"
+                            id="superficie"
+                            name="superficie"
+                            min="1"
+                            step="0.1"
+                            placeholder="Ex. 65"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="photos">Chemin de la photo</label>
+                        <input
+                            type="text"
+                            id="photos"
+                            name="photos"
+                            placeholder="images/studio/1.JPG"
+                        >
+                        <small>Indiquez le chemin relatif au dossier static.</small>
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="equipements">Équipements</label>
+                        <input
+                            type="text"
+                            id="equipements"
+                            name="equipements"
+                            placeholder="Ex. Climatisation, parking, cuisine équipée"
+                        >
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="description">Description du logement *</label>
+                        <textarea
+                            id="description"
+                            name="description"
+                            rows="5"
+                            placeholder="Décrivez le logement, ses atouts et son environnement..."
+                            required
+                        ></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="reset" class="btn btn-secondary">
+                        Effacer
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        + Ajouter le logement
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <div>
+                    <span class="section-eyebrow">PARC IMMOBILIER</span>
+                    <h2>Logements enregistrés</h2>
+                    <p>Consultez les biens et modifiez leur disponibilité.</p>
+                </div>
+                <span class="admin-count">
+                    {{ biens|length }} logement(s)
+                </span>
+            </div>
+            {% if biens %}
+            <div class="tableau-conteneur">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Logement</th>
+                            <th>Type</th>
+                            <th>Quartier</th>
+                            <th>Loyer mensuel</th>
+                            <th>Disponibilité</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bien in biens %}
+                        <tr>
+                            <td>
+                                <div class="property-table-info">
+                                    {% if bien.photos %}
+                                    <img
+                                        src="{{ url_for('static', filename=bien.photos) }}"
+                                        alt="{{ bien.titre }}"
+                                        class="miniature-bien"
+                                        loading="lazy"
+                                    >
+                                    {% else %}
+                                    <div class="miniature-bien miniature-placeholder">
+                                        N
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <strong>{{ bien.titre }}</strong>
+                                        <span class="property-id">Réf. #{{ bien.id }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ bien.type }}</td>
+                            <td>{{ bien.quartier }}</td>
+                            <td>
+                                <strong>
+                                    {{ "{:,.0f}".format(bien.loyer_mensuel).replace(",", " ") }}
+                                    FCFA
+                                </strong>
+                            </td>
+                            <td>
+                                {% if bien.disponible %}
+                                <span class="status-badge status-available">
+                                    Disponible
+                                </span>
+                                {% else %}
+                                <span class="status-badge status-unavailable">
+                                    Loué / indisponible
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form
+                                    action="{{ url_for('changer_disponibilite_bien', bien_id=bien.id) }}"
+                                    method="POST"
+                                    class="inline-form"
+                                >
+                                    {% if bien.disponible %}
+                                    <button type="submit" class="btn btn-small btn-outline">
+                                        Marquer comme loué
+                                    </button>
+                                    {% else %}
+                                    <button type="submit" class="btn btn-small btn-primary">
+                                        Rendre disponible
+                                    </button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="admin-empty-state">
+                <div class="empty-state-icon">⌂</div>
+                <h3>Aucun logement enregistré</h3>
+                <p>Utilisez le formulaire ci-dessus pour ajouter votre premier logement.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

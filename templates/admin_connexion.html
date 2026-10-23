@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block titre %}Connexion administrateur — NESTY{% endblock %}
+
+{% block contenu %}
+
+<section class="login-container">
+    <div class="login-card">
+
+        <p class="hero-sous-titre">ESPACE SÉCURISÉ</p>
+
+        <h1>Administration NESTY</h1>
+
+        <p>
+            Connectez-vous pour gérer les logements,
+            les demandes de visite, les locations et les paiements.
+        </p>
+
+        <form action="{{ url_for('connexion_admin') }}" method="POST">
+
+            <div class="champ form-group">
+                <label for="login">Identifiant</label>
+
+                <input
+                    type="text"
+                    id="login"
+                    name="login"
+                    autocomplete="username"
+                    required
+                    maxlength="100">
+            </div>
+
+            <div class="champ form-group">
+                <label for="mot_de_passe">Mot de passe</label>
+
+                <input
+                    type="password"
+                    id="mot_de_passe"
+                    name="mot_de_passe"
+                    autocomplete="current-password"
+                    required>
+            </div>
+
+            <button type="submit" class="bouton-principal">
+                Se connecter
+            </button>
+
+        </form>
+
+        <p class="note-formulaire">
+            Cette page est réservée à l'administration.
+        </p>
+
+        <a href="{{ url_for('accueil') }}">Retour à l'accueil</a>
+
+    </div>
+</section>
+
+{% endblock %}

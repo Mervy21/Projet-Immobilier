@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block titre %}Gestion des locations — NESTY{% endblock %}
+{% block contenu %}
+<section class="admin-page">
+    <div class="container">
+        <div class="admin-header">
+            <div>
+                <span class="section-eyebrow">ESPACE ADMINISTRATEUR</span>
+                <h1>Gestion des locations</h1>
+                <p>Gérez les contrats, les locataires et les locations en cours.</p>
+            </div>
+            <a href="{{ url_for('tableau_bord_admin') }}" class="btn btn-secondary">
+                ← Tableau de bord
+            </a>
+        </div>
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <div>
+                    <span class="section-eyebrow">NOUVEAU CONTRAT</span>
+                    <h2>Enregistrer une location</h2>
+                    <p>Renseignez les informations nécessaires à la création du contrat.</p>
+                </div>
+            </div>
+            <form action="{{ url_for('ajouter_location') }}" method="POST" class="admin-form">
+                <div class="form-grid">
+                    <div class="form-group form-group-full">
+                        <label for="bien_id">Logement disponible *</label>
+                        <select id="bien_id" name="bien_id" required>
+                            <option value="">Sélectionner un logement</option>
+                            {% for bien in biens %}
+                            <option value="{{ bien.id }}">{{ bien.titre }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if not biens %}
+                        <small>Aucun logement disponible actuellement. Ajoutez un logement ou rendez-en un disponible avant d'enregistrer une location.</small>
+                        {% endif %}
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="nom_locataire">Nom complet du locataire *</label>
+                        <input
+                            type="text"
+                            id="nom_locataire"
+                            name="nom_locataire"
+                            maxlength="150"
+                            placeholder="Nom et prénom du locataire"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="date_entree">Date d'entrée *</label>
+                        <input
+                            type="date"
+                            id="date_entree"
+                            name="date_entree"
+                            max="{{ aujourd_hui if aujourd_hui is defined else '' }}"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="caution">Caution (FCFA) *</label>
+                        <input
+                            type="number"
+                            id="caution"
+                            name="caution"
+                            min="0"
+                            step="1"
+                            placeholder="Ex. 150000"
+                            required
+                        >
+                    </div>
+                    <div class="form-group form-group-full">
+                        <label for="loyer_convenu">Loyer mensuel convenu (FCFA) *</label>
+                        <input
+                            type="number"
+                            id="loyer_convenu"
+                            name="loyer_convenu"
+                            min="1"
+                            step="1"
+                            placeholder="Ex. 100000"
+                            required
+                        >
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="reset" class="btn btn-secondary">
+                        Effacer
+                    </button>
+                    <button type="submit" class="btn btn-primary" {% if not biens %}disabled{% endif %}>
+                        + Enregistrer la location
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div class="admin-section">
+            <div class="admin-section-header">
+                <div>
+                    <span class="section-eyebrow">SUIVI DES CONTRATS</span>
+                    <h2>Historique des locations</h2>
+                    <p>Consultez les contrats actifs et les locations terminées.</p>
+                </div>
+                <span class="admin-count">
+                    {{ locations|length }} location(s)
+                </span>
+            </div>
+            {% if locations %}
+            <div class="tableau-conteneur">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Locataire</th>
+                            <th>Logement</th>
+                            <th>Date d'entrée</th>
+                            <th>Date de sortie</th>
+                            <th>Caution</th>
+                            <th>Loyer mensuel</th>
+                            <th>Statut</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for location in locations %}
+                        <tr>
+                            <td>
+                                <strong>{{ location.nom_locataire }}</strong>
+                            </td>
+                            <td>{{ location.titre_bien }}</td>
+                            <td>{{ location.date_entree }}</td>
+                            <td>{{ location.date_sortie or '—' }}</td>
+                            <td>
+                                {{ "{:,.0f}".format(location.caution).replace(",", " ") }} FCFA
+                            </td>
+                            <td>
+                                <strong>
+                                    {{ "{:,.0f}".format(location.loyer_convenu).replace(",", " ") }} FCFA
+                                </strong>
+                            </td>
+                            <td>
+                                {% if location.active %}
+                                <span class="status-badge status-available">
+                                    Active
+                                </span>
+                                {% else %}
+                                <span class="status-badge status-unavailable">
+                                    Terminée
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if location.active %}
+                                <form
+                                    action="{{ url_for('terminer_location', location_id=location.id) }}"
+                                    method="POST"
+                                    class="inline-form"
+                                    onsubmit="return confirm('Confirmer la fin de cette location ?');"
+                                >
+                                    <button type="submit" class="btn btn-small btn-outline">
+                                        Terminer
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span class="text-muted">Aucune action</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="admin-empty-state">
+                <div class="empty-state-icon">⌂</div>
+                <h3>Aucune location enregistrée</h3>
+                <p>Les contrats de location que vous enregistrerez apparaîtront ici.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

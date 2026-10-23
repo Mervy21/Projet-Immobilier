@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block titre %}Page introuvable — NESTY{% endblock %}
+
+{% block contenu %}
+
+<section class="login-container">
+    <div class="login-card">
+        <p class="hero-sous-titre">ERREUR 404</p>
+
+        <h1>Cette page n'existe pas</h1>
+
+        <p>
+            Le logement recherché n'est peut-être plus disponible,
+            ou l'adresse saisie est incorrecte.
+        </p>
+
+        <a href="{{ url_for('accueil') }}" class="btn">
+            Retour à l'accueil
+        </a>
+    </div>
+</section>
+
+{% endblock %} 

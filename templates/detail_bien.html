@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block titre %}{{ bien.titre }} — NESTY{% endblock %}
+{% block contenu %}
+<section class="detail-section">
+    <div class="container">
+        <a href="{{ url_for('accueil') }}#biens" class="lien-retour">
+            ← Retour aux logements
+        </a>
+        <div class="detail-grille">
+            <div class="detail-image">
+                {% if bien.photos %}
+                    <img
+                        src="{{ url_for('static', filename=bien.photos) }}"
+                        alt="Photo du logement : {{ bien.titre }}"
+                        loading="lazy">
+                {% else %}
+                    <div class="image-indisponible">
+                        Photo non disponible
+                    </div>
+                {% endif %}
+            </div>
+            <div class="detail-informations">
+                <span class="type-bien">{{ bien.type }}</span>
+                <h1>{{ bien.titre }}</h1>
+                <p class="quartier-bien">
+                    <span aria-hidden="true">📍</span>
+                    {{ bien.quartier }}, Yaoundé
+                </p>
+                <div class="detail-prix">
+                    <p class="prix-bien">
+                        {{ "{:,.0f}".format(bien.loyer_mensuel).replace(",", " ") }}
+                        FCFA
+                        <span>/ mois</span>
+                    </p>
+                </div>
+                <div class="detail-caracteristiques">
+                    <div class="caracteristique-detail">
+                        <span class="caracteristique-icone" aria-hidden="true">⌂</span>
+                        <strong>{{ bien.nombre_pieces }}</strong>
+                        <span>Pièce(s)</span>
+                    </div>
+                    <div class="caracteristique-detail">
+                        <span class="caracteristique-icone" aria-hidden="true">↔</span>
+                        <strong>{{ bien.superficie }}</strong>
+                        <span>m²</span>
+                    </div>
+                    <div class="caracteristique-detail">
+                        <span class="caracteristique-icone" aria-hidden="true">✓</span>
+                        <strong>Disponible</strong>
+                        <span>À la location</span>
+                    </div>
+                </div>
+                <div class="detail-description">
+                    <h2>À propos de ce logement</h2>
+                    <p>
+                        {{ bien.description or "Aucune description supplémentaire n'est disponible pour ce logement." }}
+                    </p>
+                </div>
+                <div class="detail-equipements">
+                    <h2>Équipements et commodités</h2>
+                    <p>
+                        {{ bien.equipements or "Les équipements de ce logement ne sont pas encore précisés." }}
+                    </p>
+                </div>
+                <a href="#demande-visite" class="bouton-principal">
+                    Demander une visite
+                </a>
+            </div>
+        </div>
+        <div class="detail-note">
+            <p>
+                <strong>Un logement vous intéresse ?</strong>
+                Envoyez une demande de visite grâce au formulaire ci-dessous.
+            </p>
+        </div>
+    </div>
+</section>
+<section class="formulaire-visite" id="demande-visite">
+    <div class="container">
+        <div class="section-entete">
+            <p class="hero-sous-titre">VOTRE PROCHAIN CHEZ-VOUS</p>
+            <h2>Organisons votre visite</h2>
+            <p>
+                Complétez les informations suivantes pour demander
+                une visite de ce logement.
+            </p>
+        </div>
+        <div class="formulaire-carte">
+            <div class="resume-logement">
+                <div>
+                    <span class="resume-libelle">Logement sélectionné</span>
+                    <h3>{{ bien.titre }}</h3>
+                    <p>{{ bien.quartier }}, Yaoundé</p>
+                </div>
+                <div class="resume-prix">
+                    <strong>
+                        {{ "{:,.0f}".format(bien.loyer_mensuel).replace(",", " ") }}
+                        FCFA
+                    </strong>
+                    <span>/ mois</span>
+                </div>
+            </div>
+            <form
+                action="{{ url_for('demander_visite', bien_id=bien.id) }}"
+                method="POST"
+                id="formulaire-visite">
+                <div class="champ">
+                    <label for="nom_client">Nom complet *</label>
+                    <input
+                        type="text"
+                        id="nom_client"
+                        name="nom_client"
+                        required
+                        minlength="2"
+                        maxlength="100"
+                        autocomplete="name"
+                        placeholder="Entrez votre nom complet">
+                </div>
+                <div class="champ">
+                    <label for="telephone">Numéro de téléphone *</label>
+                    <input
+                        type="tel"
+                        id="telephone"
+                        name="telephone"
+                        required
+                        maxlength="25"
+                        autocomplete="tel"
+                        placeholder="Ex. : +237 6XX XXX XXX">
+                </div>
+                <div class="champ">
+                    <label for="date_souhaitee">Date souhaitée pour la visite *</label>
+                    <input
+                        type="date"
+                        id="date_souhaitee"
+                        name="date_souhaitee"
+                        min="{{ aujourd_hui }}"
+                        required>
+                </div>
+                <div class="champ">
+                    <label for="message">Message complémentaire</label>
+                    <textarea
+                        id="message"
+                        name="message"
+                        rows="4"
+                        maxlength="500"
+                        placeholder="Précisez vos disponibilités ou vos questions."></textarea>
+                </div>
+                <button type="submit" class="bouton-principal">
+                    Envoyer ma demande
+                </button>
+                <p class="note-formulaire">
+                    Les champs marqués d'un astérisque (*) sont obligatoires.
+                </p>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}
